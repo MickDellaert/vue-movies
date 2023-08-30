@@ -12,12 +12,21 @@ const router = createRouter({
     {
       path: '/:type/:id',
       name: 'movie',
+
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import('../views/DetailView.vue')
+      component: () => import('../views/DetailView.vue'),
+      // meta: {
+      //   title: 'details'
+      // }
     }
   ]
 })
+
+// router.beforeEach((to, from) => {
+//   document.title = to.meta?.title ?? 'Vue movies'
+// })
+
 
 export default router

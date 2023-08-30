@@ -9,12 +9,16 @@
       <div class="details-content" v-else>
         <img :src="`${api.IMG_URL}${details.poster_path}`" alt="" />
         <div>
-          <h3>{{ mediaType }} </h3>
-          <h3 >{{ details.genres[0].name }}</h3>
+          <div class="info">
+            <h4>{{ mediaType }}</h4>
+            <h4>-</h4>
+            <h4> {{ details.genres[0].name }}</h4>
+          </div>
+
           <h1 v-if="details.title">{{ details.title }}</h1>
           <h1 v-else>{{ details.name }}</h1>
-          <h3 >{{ details.tagline }}</h3>
-          <p >{{ details.overview }}</p>
+          <h3>{{ details.tagline }}</h3>
+          <p>{{ details.overview }}</p>
         </div>
       </div>
     </div>
@@ -60,6 +64,19 @@ div {
 }
 
 img {
-  width: 300px
+  width: 300px;
+}
+
+.info {
+  display: flex;
+  gap: 0.5rem;
+}
+
+h3 {
+  margin-bottom: 20px;
+}
+
+p {
+  max-width: 40vw;
 }
 </style>

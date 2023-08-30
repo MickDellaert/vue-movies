@@ -4,9 +4,14 @@ import MovieDetails from '../components/MovieDetails.vue';
 </script>
 
 <template>
-  <div class="about">
+  <div class="details">
     <MovieDetails />
   </div>
 </template>
 
-<style></style>
+<style scoped>
+.details {
+  display: flex;
+  justify-content: center;
+}
+</style>
