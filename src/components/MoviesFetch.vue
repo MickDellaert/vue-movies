@@ -19,7 +19,7 @@ import MoviesList from "./MoviesList.vue";
 
 // const { isLoading, isError, error, data: popularMovies } = useQuery(["popular-movies"], api.getPopular);
 const { isLoading: trendingLoading, isError: trendingIsError, error: trendingError, data: trendingMovies } = useQuery(["trending-movies"], api.getTrending);
-console.log(trendingMovies)
+// console.log(trendingMovies)
 
 </script>
 
