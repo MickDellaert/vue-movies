@@ -4,7 +4,7 @@
     <p>{{ currentIndex }}</p>
     <button @click="previousFunction">Previous</button>
     <button @click="nextFunction">Next</button>
-    <button @click="toggleTransition">Reset</button>
+    <!-- <button @click="toggleTransition">Reset</button> -->
     <span v-if="isLoading">Loading...</span>
     <span v-else-if="isError">Error: {{ error.message }}</span>
     <ul v-else class="slider-container">
@@ -12,7 +12,7 @@
         <div :style="{ transform: `translateX(-${currentIndex * (100 / numberShown)}%)` }"
           :class="['slider-content', sliderTransition ? 'slider-transition' : 'slider-no-transition']"
           @transitionend="handleTransition">
-          <div v-for="media in dataCombined" :key="media.id" class="slider-item" :style="{
+          <div @click="handleClick(media.key)" v-for="media in dataCombined" :key="media.id" class="slider-item" :style="{
             width: `calc((100%  / ${numberShown})`,
           }">
             <p>{{ media.key }}</p>
@@ -30,13 +30,13 @@ import { useQuery } from "@tanstack/vue-query";
 import { computed, ref } from "vue";
 import * as api from "../../api/api"
 
-const currentIndex = ref(6)
 const sliderTransition = ref(true)
-const totalNumber = 6
-const numberShown = 6
+const totalNumber = 12
+const numberShown = 8
 const skipFirst = 0
+const currentIndex = ref(numberShown)
 
-// const { isLoading, isError, error, data: popularMovies } = useQuery(["popular-movies"], api.getPopular);
+
 const { isLoading, isError, error, data } = useQuery(["trending-movies"], api.getTrending, {
   select: (data) => {
     const slicedData = data.results.slice(0, totalNumber);
@@ -60,24 +60,29 @@ console.log(dataCombined)
 
 
 const nextFunction = () => {
-  sliderTransition.value = true
-  currentIndex.value++
+  if (currentIndex.value <= totalNumber) {
+    sliderTransition.value = true
+    currentIndex.value++
+  }
 }
 
 const previousFunction = () => {
-  sliderTransition.value = true
-  currentIndex.value--
+  if (currentIndex.value > 0) {
+    sliderTransition.value = true
+    currentIndex.value--
+  }
 }
 
-const toggleTransition = () => {
-  // currentIndex.value = 0
-  sliderTransition.value = !sliderTransition.value
-}
+// const toggleTransition = () => {
+//   // currentIndex.value = 0
+//   sliderTransition.value = !sliderTransition.value
+// }
 
 const handleTransition = () => {
   if (currentIndex.value === 0) {
     sliderTransition.value = false;
     currentIndex.value = (dataCombined.value.length - numberShown * 2)
+    currentIndex.value = data.value.length
   }
   if (
     currentIndex.value > dataCombined.value.length - numberShown * 2
@@ -86,6 +91,24 @@ const handleTransition = () => {
     currentIndex.value = (currentIndex.value -
       (dataCombined.value.length - numberShown * 2))
   }
+};
+
+// const handleTransition = () => {
+//   if (currentIndex.value === 0) {
+//     sliderTransition.value = false;
+//     currentIndex.value = totalNumber
+//   }
+//   if (
+//     currentIndex.value > totalNumber
+//   ) {
+//     sliderTransition.value = false;
+//     currentIndex.value = 1
+//   }
+// };
+
+const handleClick = (item) => {
+  sliderTransition.value = true
+  currentIndex.value = item
 };
 
 </script>
