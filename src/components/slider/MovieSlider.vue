@@ -4,7 +4,7 @@
     <p>{{ currentIndex }}</p>
     <button @click="previousFunction">Previous</button>
     <button @click="nextFunction">Next</button>
-    <!-- <button @click="toggleTransition">Reset</button> -->
+    <button @click="toggleTransition">{{ isSliding ? 'Pause' : 'Play' }}</button>
     <span v-if="isLoading">Loading...</span>
     <span v-else-if="isError">Error: {{ error.message }}</span>
     <ul v-else class="slider-container">
@@ -31,6 +31,9 @@ import { computed, ref } from "vue";
 import * as api from "../../api/api"
 
 const sliderTransition = ref(true)
+const isSliding = ref(false)
+const intervalId = ref(null)
+
 const totalNumber = 12
 const numberShown = 8
 const skipFirst = 0
@@ -55,10 +58,6 @@ const dataCombined = computed(() => {
   return dataIndexed
 })
 
-console.log(data)
-console.log(dataCombined)
-
-
 const nextFunction = () => {
   if (currentIndex.value <= totalNumber) {
     sliderTransition.value = true
@@ -73,10 +72,17 @@ const previousFunction = () => {
   }
 }
 
-// const toggleTransition = () => {
-//   // currentIndex.value = 0
-//   sliderTransition.value = !sliderTransition.value
-// }
+const toggleTransition = () => {
+  isSliding.value = !isSliding.value
+  if (isSliding.value) {
+    intervalId.value = setInterval(() => {
+      sliderTransition.value = true;
+      currentIndex.value++
+    }, 1500)
+  } else {
+    clearInterval(intervalId.value)
+  }
+}
 
 const handleTransition = () => {
   if (currentIndex.value === 0) {
@@ -92,19 +98,6 @@ const handleTransition = () => {
       (dataCombined.value.length - numberShown * 2))
   }
 };
-
-// const handleTransition = () => {
-//   if (currentIndex.value === 0) {
-//     sliderTransition.value = false;
-//     currentIndex.value = totalNumber
-//   }
-//   if (
-//     currentIndex.value > totalNumber
-//   ) {
-//     sliderTransition.value = false;
-//     currentIndex.value = 1
-//   }
-// };
 
 const handleClick = (item) => {
   sliderTransition.value = true
