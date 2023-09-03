@@ -21,24 +21,18 @@
         </div>
       </li>
     </ul>
-
   </div>
 </template>
 
 <script setup>
 import { useQuery } from "@tanstack/vue-query";
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import * as api from "../../api/api"
-
-const sliderTransition = ref(true)
-const isSliding = ref(false)
-const intervalId = ref(null)
+import useSlider from '../../composables/useSlider'
 
 const totalNumber = 12
 const numberShown = 8
 const skipFirst = 0
-const currentIndex = ref(numberShown)
-
 
 const { isLoading, isError, error, data } = useQuery(["trending-movies"], api.getTrending, {
   select: (data) => {
@@ -58,51 +52,22 @@ const dataCombined = computed(() => {
   return dataIndexed
 })
 
-const nextFunction = () => {
-  if (currentIndex.value <= totalNumber) {
-    sliderTransition.value = true
-    currentIndex.value++
-  }
+const {
+  currentIndex,
+  sliderTransition,
+  isSliding,
+  nextFunction,
+  previousFunction,
+  toggleTransition,
+  handleTransition,
+  handleClick
 }
+  = useSlider(
+    numberShown,
+    totalNumber,
+    dataCombined
+  )
 
-const previousFunction = () => {
-  if (currentIndex.value > 0) {
-    sliderTransition.value = true
-    currentIndex.value--
-  }
-}
-
-const toggleTransition = () => {
-  isSliding.value = !isSliding.value
-  if (isSliding.value) {
-    intervalId.value = setInterval(() => {
-      sliderTransition.value = true;
-      currentIndex.value++
-    }, 1500)
-  } else {
-    clearInterval(intervalId.value)
-  }
-}
-
-const handleTransition = () => {
-  if (currentIndex.value === 0) {
-    sliderTransition.value = false;
-    currentIndex.value = (dataCombined.value.length - numberShown * 2)
-    currentIndex.value = data.value.length
-  }
-  if (
-    currentIndex.value > dataCombined.value.length - numberShown * 2
-  ) {
-    sliderTransition.value = false;
-    currentIndex.value = (currentIndex.value -
-      (dataCombined.value.length - numberShown * 2))
-  }
-};
-
-const handleClick = (item) => {
-  sliderTransition.value = true
-  currentIndex.value = item
-};
 
 </script>
 
